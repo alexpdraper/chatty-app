@@ -20,14 +20,28 @@ var data = {
 
 const App = React.createClass({
   getInitialState() {
+    let data = {
+      currentUser: {
+        name: "Bob"
+      },
+      messages: []
+    };
     return data;
   },
 
   componentDidMount() {
-    console.log("componentDidMount <App />");
+    this.socket = new WebSocket('ws://localhost:4000');
+    this.socket.onopen = function(event) {
+      console.log('Open socket!');
+    };
+
+    this.socket.onmessage = (event) => {
+      this.addNewMessage(JSON.parse(event.data));
+    };
+    console.log('componentDidMount <App />');
     setTimeout(() => {
       console.log("Simulating incoming message");
-      this.addNewMessage({
+      this.sendMessage({
         username: "Michelle",
         content: "Hello there!"
       });
@@ -35,13 +49,15 @@ const App = React.createClass({
   },
 
   addNewMessage(message) {
-    let messages = this.state.messages;
-    // Assign the id to be 1 more than the id of the last message
-    Object.assign(message, {id: messages[messages.length - 1].id + 1});
     // Add a new message to the list of messages in the data store
     this.state.messages.push(message);
     // Update the state of the app component. This will call render()
     this.setState({messages: this.state.messages});
+  },
+
+  sendMessage(message) {
+    // Send to the socket server
+    this.socket.send(JSON.stringify(message));
   },
 
   updateUsername(name) {
@@ -55,7 +71,7 @@ const App = React.createClass({
         <MessageList messages={this.state.messages} />
         <ChatBar
           username={this.state.currentUser.name}
-          submitMessage={this.addNewMessage}
+          submitMessage={this.sendMessage}
           handleUsernameChange={this.updateUsername} />
       </div>
     );
