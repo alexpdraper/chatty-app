@@ -39,13 +39,6 @@ const App = React.createClass({
       this.addNewMessage(JSON.parse(event.data));
     };
     console.log('componentDidMount <App />');
-    setTimeout(() => {
-      console.log("Simulating incoming message");
-      this.sendMessage({
-        username: "Michelle",
-        content: "Hello there!"
-      });
-    }, 3000);
   },
 
   addNewMessage(message) {
@@ -56,11 +49,14 @@ const App = React.createClass({
   },
 
   sendMessage(message) {
+    // Set the message username to the name of the current user or 'Anonymous'
+    message.username = this.state.currentUser.name || 'Anonymous';
     // Send to the socket server
     this.socket.send(JSON.stringify(message));
   },
 
   updateUsername(name) {
+    console.log('Updating username to:', name);
     let newState = Object.assign({}, this.state, {currentUser: {name: name}});
     this.setState(newState);
   },
@@ -70,9 +66,9 @@ const App = React.createClass({
       <div>
         <MessageList messages={this.state.messages} />
         <ChatBar
-          username={this.state.currentUser.name}
+          initialUsername={this.state.currentUser.name}
           submitMessage={this.sendMessage}
-          handleUsernameChange={this.updateUsername} />
+          updateUsername={this.updateUsername} />
       </div>
     );
   }
