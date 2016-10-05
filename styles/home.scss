@@ -18,9 +18,12 @@ nav {
 #message-list {
   height: calc(100vh - 131px);
   padding: 16px 8px;
+  overflow: auto;
   .message {
     padding: 4px 0;
     display: flex;
+    animation-duration: 0.3s;
+    animation-name: fadein;
     .username, .content {
       display: inline-block;
       padding: 4px 0;
@@ -40,6 +43,19 @@ nav {
     }
   }
 }
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  75% {
+    opacity: 0.8;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 footer {
   height: 41px;
   border-top: 1px solid black;
