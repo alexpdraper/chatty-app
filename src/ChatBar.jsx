@@ -1,5 +1,20 @@
 import React from 'react';
 
+function validColor(stringToTest) {
+  //Alter the following conditions according to your need.
+  if (stringToTest === "") { return false; }
+  if (stringToTest === "inherit") { return false; }
+  if (stringToTest === "transparent") { return false; }
+
+  var image = document.createElement("img");
+  image.style.color = "rgb(0, 0, 0)";
+  image.style.color = stringToTest;
+  if (image.style.color !== "rgb(0, 0, 0)") { return true; }
+  image.style.color = "rgb(255, 255, 255)";
+  image.style.color = stringToTest;
+  return image.style.color !== "rgb(255, 255, 255)";
+}
+
 const ChatBar = React.createClass({
   getInitialState() {
     return {
@@ -15,23 +30,26 @@ const ChatBar = React.createClass({
   sendMessage(event) {
     const enterKeyCode = 13;
     if (event.keyCode === enterKeyCode) {
+      let message = {color: false};
+      if (/^col(o|ou)r/i.test(this.state.messageValue)) {
+        let messageArr = this.state.messageValue.split(' ');
+        if (messageArr.length >= 2 && validColor(messageArr[1])) {
+          console.log('New colour', messageArr[1]);
+          message.color = messageArr[1];
+        }
+      }
       this.props.updateUsername(this.state.username);
-      this.props.submitMessage({
-        type: 'message',
-        username: this.state.username || 'Anonymous',
-        content: this.state.messageValue
-      });
+      message.type = 'message';
+      message.username = this.state.username || 'Anonymous';
+      message.content = this.state.messageValue;
+      this.props.submitMessage(message);
       this.setState({messageValue: ''});
     }
   },
 
-  sendUsername() {
-    // this.props.updateUsername(this.state.username);
-  },
-
   render() {
     return (
-      <footer>
+      <footer style={{backgroundColor: this.props.color}}>
         <input
           id="username"
           type="text"

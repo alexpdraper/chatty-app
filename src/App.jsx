@@ -1,14 +1,17 @@
 import React from 'react';
 import MessageList from './MessageList.jsx';
 import ChatBar from './ChatBar.jsx';
+import Header from './Header.jsx';
 
 const App = React.createClass({
   getInitialState() {
     let data = {
       currentUser: {
-        name: "Bob"
+        name: ''
       },
-      messages: []
+      messages: [],
+      numUsers: 0,
+      color: 'tomato'
     };
     return data;
   },
@@ -23,8 +26,12 @@ const App = React.createClass({
       const message = JSON.parse(event.data);
       if (message.type === 'message' || message.type === 'notification') {
         this.addNewMessage(message);
+      } else if (message.type === 'usercount') {
+        this.setState({numUsers: message.numUsers});
+      } else if (message.type === 'setColor') {
+        this.setState({color: message.color});
       } else {
-        console.log('Unknown message type');
+        console.log('Unknown message type', message);
       }
     };
     console.log('componentDidMount <App />');
@@ -38,21 +45,28 @@ const App = React.createClass({
   },
 
   sendMessage(message) {
+    if (message.color) {
+      this.setState({color: message.color});
+      return;
+    }
+
+    // Set the message color
+    message.color = this.state.color;
     // Send to the socket server
     this.socket.send(JSON.stringify(message));
   },
 
   sendNotification(content) {
-    this.sendMessage({
+    this.socket.send(JSON.stringify({
       type: 'notification',
       content
-    });
+    }));
   },
 
   updateUsername(name) {
     if (name !== this.state.currentUser.name) {
-      console.log('Updating username from:', this.state.currentUser.name, ' to:', name);
-      this.sendNotification(`${this.state.currentUser.name} changed their username to ${name}`);
+      let prevName = this.state.currentUser.name || 'Anonymous';
+      this.sendNotification(`${prevName} changed their name to ${name}`);
       let newState = Object.assign({}, this.state, {currentUser: {name: name}});
       this.setState(newState);
     }
@@ -61,11 +75,13 @@ const App = React.createClass({
   render() {
     return (
       <div>
+        <Header numUsers={this.state.numUsers} color={this.state.color} />
         <MessageList messages={this.state.messages} />
         <ChatBar
           initialUsername={this.state.currentUser.name}
           submitMessage={this.sendMessage}
-          updateUsername={this.updateUsername} />
+          updateUsername={this.updateUsername}
+          color={this.state.color} />
       </div>
     );
   }

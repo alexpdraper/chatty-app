@@ -16,7 +16,8 @@ const MessageList = React.createClass({
                 <Message
                   key={message.id}
                   username={message.username}
-                  content={message.content} />
+                  content={message.content}
+                  color={message.color} />
               );
               break;
             case 'notification':
