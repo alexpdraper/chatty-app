@@ -66,7 +66,8 @@ const App = React.createClass({
   updateUsername(name) {
     if (name !== this.state.currentUser.name) {
       let prevName = this.state.currentUser.name || 'Anonymous';
-      this.sendNotification(`${prevName} changed their name to ${name}`);
+      let newName = name || 'Anonymous';
+      this.sendNotification(`${prevName} changed their name to ${newName}`);
       let newState = Object.assign({}, this.state, {currentUser: {name: name}});
       this.setState(newState);
     }

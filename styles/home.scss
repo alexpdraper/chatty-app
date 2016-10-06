@@ -1,7 +1,16 @@
+$font-main: 'Josefin Sans', 'Helvetica Neue', Helvetica, sans-serif;
+
 html, body {
   max-height: 100vh;
   max-width: 100vw;
-  font-family: 'Open Sans', sans-serif;
+  font-family: $font-main;
+}
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: $font-main;
 }
 .wrapper {
   font-size: 14px;
@@ -44,6 +53,22 @@ nav {
     }
     .content {
       flex: 85;
+      .thumbnail {
+        border: 1px solid #ccc;
+        box-shadow: 0 2px 3px rgba(0, 0, 0, 0.15), 0 3px 4px rgba(0, 0, 0, 0.15);
+        max-width: 60%;
+        border-radius: 4px;
+        padding: 5px;
+        display: block;
+        margin: 0 0 10px;
+        &:hover {
+          border-color: #2222aa;
+        }
+        img {
+          width: 100%;
+          height: 100%;
+        }
+      }
     }
     &.system {
       font-weight: 400;
