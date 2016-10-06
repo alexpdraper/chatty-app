@@ -2,22 +2,6 @@ import React from 'react';
 import MessageList from './MessageList.jsx';
 import ChatBar from './ChatBar.jsx';
 
-var data = {
-  currentUser: {name: "Bob"}, // optional. if currentUser is not defined, it means the user is Anonymous
-  messages: [
-    {
-      id: 0,
-      username: "Bob",
-      content: "Has anyone seen my marbles?",
-    },
-    {
-      id: 1,
-      username: "Anonymous",
-      content: "No, I think you lost them. You lost your marbles Bob. You lost them for good."
-    }
-  ]
-};
-
 const App = React.createClass({
   getInitialState() {
     let data = {
@@ -36,7 +20,12 @@ const App = React.createClass({
     };
 
     this.socket.onmessage = (event) => {
-      this.addNewMessage(JSON.parse(event.data));
+      const message = JSON.parse(event.data);
+      if (message.type === 'message' || message.type === 'notification') {
+        this.addNewMessage(message);
+      } else {
+        console.log('Unknown message type');
+      }
     };
     console.log('componentDidMount <App />');
   },
@@ -49,16 +38,24 @@ const App = React.createClass({
   },
 
   sendMessage(message) {
-    // Set the message username to the name of the current user or 'Anonymous'
-    message.username = this.state.currentUser.name || 'Anonymous';
     // Send to the socket server
     this.socket.send(JSON.stringify(message));
   },
 
+  sendNotification(content) {
+    this.sendMessage({
+      type: 'notification',
+      content
+    });
+  },
+
   updateUsername(name) {
-    console.log('Updating username to:', name);
-    let newState = Object.assign({}, this.state, {currentUser: {name: name}});
-    this.setState(newState);
+    if (name !== this.state.currentUser.name) {
+      console.log('Updating username from:', this.state.currentUser.name, ' to:', name);
+      this.sendNotification(`${this.state.currentUser.name} changed their username to ${name}`);
+      let newState = Object.assign({}, this.state, {currentUser: {name: name}});
+      this.setState(newState);
+    }
   },
 
   render() {

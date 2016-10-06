@@ -15,7 +15,10 @@ const ChatBar = React.createClass({
   sendMessage(event) {
     const enterKeyCode = 13;
     if (event.keyCode === enterKeyCode) {
+      this.props.updateUsername(this.state.username);
       this.props.submitMessage({
+        type: 'message',
+        username: this.state.username || 'Anonymous',
         content: this.state.messageValue
       });
       this.setState({messageValue: ''});
@@ -23,7 +26,7 @@ const ChatBar = React.createClass({
   },
 
   sendUsername() {
-    this.props.updateUsername(this.state.username);
+    // this.props.updateUsername(this.state.username);
   },
 
   render() {

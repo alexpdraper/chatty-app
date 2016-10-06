@@ -10,12 +10,23 @@ const MessageList = React.createClass({
     return (
       <div id='message-list'>
         {this.props.messages.map(message => {
-          return (
-            <Message
-              key={message.id}
-              username={message.username}
-              content={message.content} />
-          );
+          switch(message.type) {
+            case 'message':
+              return (
+                <Message
+                  key={message.id}
+                  username={message.username}
+                  content={message.content} />
+              );
+              break;
+            case 'notification':
+              return (
+                <SystemMessage
+                  key={message.id}
+                  content={message.content} />
+              );
+              break;
+          }
         })}
       </div>
     );
