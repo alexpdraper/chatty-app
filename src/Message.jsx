@@ -4,7 +4,6 @@ const Message = React.createClass({
   render() {
     const re = /(https?:\/\/\S*\.(?:png|jpe?g|gif))/i;
     let content = this.props.content.split(re);
-    console.log(content);
 
     return (
       <div className='message'>

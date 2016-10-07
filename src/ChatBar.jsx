@@ -1,7 +1,6 @@
 import React from 'react';
 
 function validColor(stringToTest) {
-  //Alter the following conditions according to your need.
   if (stringToTest === "") { return false; }
   if (stringToTest === "inherit") { return false; }
   if (stringToTest === "transparent") { return false; }
@@ -31,7 +30,7 @@ const ChatBar = React.createClass({
     const enterKeyCode = 13;
     if (event.keyCode === enterKeyCode) {
       let message = {color: false};
-      if (/^col(o|ou)r/i.test(this.state.messageValue)) {
+      if (/^colou?r/i.test(this.state.messageValue)) {
         let messageArr = this.state.messageValue.split(' ');
         if (messageArr.length >= 2 && validColor(messageArr[1])) {
           console.log('New colour', messageArr[1]);
@@ -55,8 +54,7 @@ const ChatBar = React.createClass({
           type="text"
           placeholder="Your Name (Optional)"
           value={this.state.username}
-          onChange={(e) => {this.setState({username: e.target.value});}}
-          onBlur={this.sendUsername} />
+          onChange={(e) => {this.setState({username: e.target.value});}} />
         <input
           id="new-message"
           type="text"

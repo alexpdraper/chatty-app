@@ -5,7 +5,7 @@ import Header from './Header.jsx';
 
 const App = React.createClass({
   getInitialState() {
-    let data = {
+    return {
       currentUser: {
         name: ''
       },
@@ -13,15 +13,13 @@ const App = React.createClass({
       numUsers: 0,
       color: 'tomato'
     };
-    return data;
   },
 
   componentDidMount() {
     this.socket = new WebSocket('ws://localhost:4000');
-    this.socket.onopen = function(event) {
-      console.log('Open socket!');
+    this.socket.onopen = (event) => {
+      // Nothing happens
     };
-
     this.socket.onmessage = (event) => {
       const message = JSON.parse(event.data);
       if (message.type === 'message' || message.type === 'notification') {
@@ -30,11 +28,8 @@ const App = React.createClass({
         this.setState({numUsers: message.numUsers});
       } else if (message.type === 'setColor') {
         this.setState({color: message.color});
-      } else {
-        console.log('Unknown message type', message);
       }
     };
-    console.log('componentDidMount <App />');
   },
 
   addNewMessage(message) {
